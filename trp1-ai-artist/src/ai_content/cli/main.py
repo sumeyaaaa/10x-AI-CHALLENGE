@@ -232,7 +232,7 @@ async def _generate_music(
 
 @app.command()
 def video(
-    prompt: str = typer.Option(..., "--prompt", "-p", help="Scene description"),
+    prompt: Optional[str] = typer.Option(None, "--prompt", "-p", help="Scene description"),
     provider: str = typer.Option("veo", "--provider", help="Provider: veo, kling"),
     style: Optional[str] = typer.Option(None, "--style", "-s", help="Preset style name"),
     aspect: str = typer.Option("16:9", "--aspect", "-a", help="Aspect ratio"),
@@ -241,9 +241,14 @@ def video(
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Output file"),
 ):
     """Generate video with AI."""
+    # Validate that either prompt or style is provided
+    if not prompt and not style:
+        console.print("[red]Error: Either --prompt or --style must be provided[/red]")
+        raise typer.Exit(1)
+    
     asyncio.run(
         _generate_video(
-            prompt=prompt,
+            prompt=prompt,  # Will be set from preset if style is provided
             provider=provider,
             style=style,
             aspect=aspect,
