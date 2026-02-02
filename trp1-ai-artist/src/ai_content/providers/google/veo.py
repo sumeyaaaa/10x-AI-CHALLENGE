@@ -104,6 +104,8 @@ class GoogleVeoProvider:
 
         try:
             # Generate
+            # Note: aspect_ratio and person_generation may need to be passed differently
+            # Trying with just required parameters first
             if first_frame_url:
                 # Image-to-video
                 image_data = await self._fetch_image(first_frame_url)
@@ -112,16 +114,12 @@ class GoogleVeoProvider:
                     model=model,
                     prompt=prompt,
                     image=image,
-                    aspect_ratio=aspect_ratio,
-                    person_generation=person_generation,
                 )
             else:
                 # Text-to-video
                 operation = await client.aio.models.generate_videos(
                     model=model,
                     prompt=prompt,
-                    aspect_ratio=aspect_ratio,
-                    person_generation=person_generation,
                 )
 
             # Poll until complete
