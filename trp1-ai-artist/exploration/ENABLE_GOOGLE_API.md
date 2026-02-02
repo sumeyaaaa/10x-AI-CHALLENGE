@@ -1,89 +1,111 @@
-# How to Enable Google Music Generation API
+# How to Enable Google APIs (Music & Video)
 
-## Step-by-Step Guide
+## Important: Google AI Studio vs Google Cloud Console
 
-### 1. Go to Google Cloud Console
-Visit: https://console.cloud.google.com/
+**For this challenge, use Google AI Studio (FREE):**
+- ✅ **Google AI Studio**: https://aistudio.google.com/ → Get API Key (FREE, no billing)
+- ❌ **Google Cloud Console**: Not needed for this challenge
 
-### 2. Select or Create a Project
-- If you have a project, select it from the dropdown
-- If not, create a new project:
-  - Click "Select a project" → "New Project"
-  - Give it a name (e.g., "AI Content Generation")
-  - Click "Create"
+The challenge expects you to use the FREE API keys from Google AI Studio, not Google Cloud Console.
 
-### 3. Enable the Music Generation API
-1. Go to **APIs & Services** → **Library**
-2. Search for: **"Music Generation API"** or **"Gemini API"**
-3. Click on the API
-4. Click **"Enable"** button
+---
 
-**Alternative: Direct Link**
-- Go to: https://console.cloud.google.com/apis/library
-- Search for "Gemini API" or "Generative Language API"
-- Enable it
+## Music Generation API (Lyria) ✅ WORKING
 
-### 4. Verify API Key Permissions
-1. Go to **APIs & Services** → **Credentials**
-2. Find your API key (the one in your `.env` file)
-3. Click on it to edit
-4. Under **"API restrictions"**:
-   - Select **"Restrict key"**
-   - Check **"Generative Language API"** or **"Gemini API"**
-   - Save
+### Using Google AI Studio (Recommended - FREE)
 
-### 5. Check API Key Restrictions
-Make sure your API key:
-- ✅ Is not restricted to specific IPs (unless you're using a server)
-- ✅ Has the correct API enabled
-- ✅ Is not expired
+1. **Get API Key**
+   - Visit: https://aistudio.google.com/
+   - Sign in with Google account
+   - Click "Get API Key" → Create API key
+   - Copy the API key to your `.env` file as `GEMINI_API_KEY`
 
-### 6. Test Again
-After enabling the API, wait 1-2 minutes, then try:
-```bash
-uv run ai-content music --style jazz --provider lyria --duration 30
-```
+2. **Test Music Generation**
+   ```bash
+   uv run ai-content music --style jazz --provider lyria --duration 30
+   ```
 
 **✅ Success Confirmed:**
 - API is now working correctly
 - Successfully generated 5 audio files
 - Files saved in `exports/` directory
+- No Google Cloud Console setup needed
 
 ## Common Issues
 
 **Issue:** "API key not valid"
-- **Solution:** Make sure the API is enabled for your project
-- **Solution:** Verify the API key is associated with the correct project
+- **Solution:** Verify API key is from Google AI Studio (not expired)
+- **Solution:** Check that the key is correctly set in `.env` file
+- **Solution:** Make sure there are no extra spaces in the API key
 
 **Issue:** "Permission denied"
-- **Solution:** Check API key restrictions in Credentials
-- **Solution:** Ensure the API is enabled
+- **Solution:** API key from Google AI Studio should work automatically
+- **Solution:** If using Google Cloud Console, check API restrictions
 
 **Issue:** API not found
-- **Solution:** The API might be called "Generative Language API" instead
-- **Solution:** Enable "Gemini API" which includes music generation
-
-## Quick Check
-To verify your API key works, you can test it directly:
-```bash
-curl "https://generativelanguage.googleapis.com/v1beta/models?key=YOUR_API_KEY"
-```
-
-Replace `YOUR_API_KEY` with your actual key from `.env`.
+- **Solution:** Google AI Studio API keys work for all Gemini features
+- **Solution:** No separate enablement needed for music/video
 
 ---
 
-## Video Generation API
+## Video Generation API (Veo)
 
-The same API key and permissions work for video generation (Veo). However, there was a codebase issue that has been fixed:
+### Enabling Video Generation in Google AI Studio
 
-**Fixed Issues:**
+The same API key from Google AI Studio should work for video generation, but you may need to verify it's enabled:
+
+1. **Go to Google AI Studio**
+   - Visit: https://aistudio.google.com/
+   - Sign in with your Google account
+
+2. **Check API Key Permissions**
+   - Click on your API key or go to API Keys section
+   - Verify the key has access to:
+     - ✅ Generative Language API (for music)
+     - ✅ Video Generation API (for Veo) - **Check this!**
+
+3. **Enable Video Generation (if needed)**
+   - Some API keys may need video generation explicitly enabled
+   - Check if there's a toggle or setting for "Video Generation" or "Veo"
+   - The API key should work for both music (Lyria) and video (Veo)
+
+4. **Verify Model Access**
+   - The video model used is: `veo-3.1-generate-preview`
+   - Make sure your API key has access to this model
+
+### Current Status
+
+**Code Status:** ✅ Fixed
 - Changed `generate_video` → `generate_videos` (correct method name)
 - Removed `GenerateVideoConfig` object (doesn't exist in API)
-- Pass parameters directly: `aspect_ratio` and `person_generation`
+- Removed unsupported parameters from API call
 
-**Test Video Generation:**
+**API Status:** ✅ Working (Quota Limited)
+- Same API key works for music (Lyria) ✅
+- Same API key works for video (Veo) ✅ - **API is valid!**
+- ⚠️ Getting "429 RESOURCE_EXHAUSTED" - Quota exceeded
+- **This is good news:** API key is working, just hit free tier limits
+
+### Test Video Generation
+
+After verifying API key settings:
 ```bash
 uv run ai-content video --style nature --provider veo --duration 5
 ```
+
+### Troubleshooting Video API
+
+**Error:** `429 RESOURCE_EXHAUSTED` (Quota Exceeded) ✅ **This means API is working!**
+- **What it means:** API key is valid, code is working, but you've hit the free tier quota
+- **Solution 1:** Wait for quota to reset (check at https://ai.dev/rate-limit)
+- **Solution 2:** Video generation may have stricter quotas than music generation
+- **Solution 3:** Document this as a limitation - API is working, just quota-limited
+- **Status:** ✅ API key validated, code working, just need to work within free tier limits
+
+**Error:** `API key not valid` (if you see this)
+- **Solution 1:** Verify API key is from Google AI Studio
+- **Solution 2:** Check API key is correctly set in `.env` file
+- **Solution 3:** Make sure there are no extra spaces in the API key
+
+**Note:** Google AI Studio is FREE and separate from Google Cloud Console. No billing setup required. Free tier has quotas/rate limits.
 

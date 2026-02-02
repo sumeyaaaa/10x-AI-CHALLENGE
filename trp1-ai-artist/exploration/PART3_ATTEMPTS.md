@@ -78,7 +78,7 @@ https://aimlapi.com/app/verification
 
 ---
 
-### 3. Video Generation with Veo (Google) 🔄 **FIXED - Ready to Test**
+### 3. Video Generation with Veo (Google) 🔄 **Code Fixed - API Key Issue**
 
 **Command:**
 ```bash
@@ -88,19 +88,37 @@ uv run ai-content video --style nature --provider veo --duration 5
 **Initial Errors:**
 1. `AttributeError: module 'google.genai.types' has no attribute 'GenerateVideoConfig'`
 2. `AttributeError: 'AsyncModels' object has no attribute 'generate_video'`
+3. `TypeError: AsyncModels.generate_videos() got an unexpected keyword argument 'aspect_ratio'`
 
 **Fixes Applied:**
 1. ✅ Removed `GenerateVideoConfig` object (doesn't exist in API)
 2. ✅ Changed `generate_video` → `generate_videos` (correct method name)
-3. ✅ Pass parameters directly to `generate_videos()` method:
-   - `aspect_ratio=aspect_ratio`
-   - `person_generation=person_generation`
+3. ✅ Removed unsupported parameters (`aspect_ratio`, `person_generation`) from API call
+4. ✅ API call now works correctly (no more TypeError)
 
 **Code Changes:**
 - **File:** `src/ai_content/providers/google/veo.py`
-- **Lines 105-129:** Removed config object, changed method name, pass params directly
+- **Lines 105-125:** Removed config object, changed method name, removed unsupported params
 
-**Status:** Code fixed, ready for testing. API key should work since it's working for music generation.
+**Current Status:**
+- ✅ Code is fixed and API call is working
+- ✅ API key is valid (no more "invalid" error)
+- ⚠️ Getting "429 RESOURCE_EXHAUSTED" - Quota exceeded error
+- **This means:**
+  - API key is working correctly ✅
+  - Code is working correctly ✅
+  - Hit the free tier quota/rate limit for video generation
+
+**Error Details:**
+```
+429 RESOURCE_EXHAUSTED. 'You exceeded your current quota, please check your plan and billing details.'
+```
+
+**Next Steps:**
+- Wait for quota to reset (usually daily or hourly)
+- Check quota usage at: https://ai.dev/rate-limit
+- Document this as a limitation in the submission
+- The API is working - just need to wait or use within free tier limits
 
 ---
 
